@@ -20,7 +20,7 @@ router.resource('modes', '#controllers/modes_controller').use('*', middleware.au
 // Expense and Analytics routes
 router
   .group(() => {
-    router.get('/by-month', '#controllers/expenses_controller.getByMonth')
+    router.get('/expenses/by-month', '#controllers/expenses_controller.getByMonth')
     router.get('/stats/daily-summary', '#controllers/expenses_controller.getDailySummary')
     router.get('/stats/category-summary', '#controllers/expenses_controller.getCategorySummary')
     router.resource('expenses', '#controllers/expenses_controller').apiOnly()

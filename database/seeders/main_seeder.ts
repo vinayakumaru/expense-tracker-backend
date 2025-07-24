@@ -82,7 +82,7 @@ export default class extends BaseSeeder {
 
       // Savitha's daily expenses
       for (let j = 0; j < Math.floor(Math.random() * 4) + 1; j++) {
-        const amount = Math.random() > 0.95 ? Math.random() * 2000 + 5000 : Math.random() * 4800 + 50
+        const amount = Math.random() > 0.95 ? Math.random() * 200 + 500 : Math.random() * 480 + 5
         const savings = this.calculateSavings(amount)
         savithaTotalSavings += savings
         expensesToCreate.push({
@@ -98,7 +98,7 @@ export default class extends BaseSeeder {
 
       // Anika's daily expenses
       for (let k = 0; k < Math.floor(Math.random() * 3) + 1; k++) {
-        const amount = Math.random() > 0.98 ? Math.random() * 3000 + 5000 : Math.random() * 4500 + 100
+        const amount = Math.random() > 0.98 ? Math.random() * 300 + 500 : Math.random() * 450 + 1
         const savings = this.calculateSavings(amount)
         anikaTotalSavings += savings
         expensesToCreate.push({
@@ -114,7 +114,7 @@ export default class extends BaseSeeder {
 
       // Rohan's daily expenses
       for (let l = 0; l < Math.floor(Math.random() * 3) + 1; l++) {
-        const amount = Math.random() > 0.96 ? Math.random() * 4000 + 5000 : Math.random() * 4900 + 80
+        const amount = Math.random() > 0.96 ? Math.random() * 400 + 500 : Math.random() * 490 + 8
         const savings = this.calculateSavings(amount)
         rohanTotalSavings += savings
         expensesToCreate.push({

@@ -14,15 +14,15 @@ router.group(() => {
   .prefix('auth')
 
 // Category and Mode routes (protected by auth middleware)
-router.resource('categories', '#controllers/category_controller').use('*', middleware.auth())
-router.resource('modes', '#controllers/mode_controller').use('*', middleware.auth())
+router.resource('categories', '#controllers/categories_controller').use('*', middleware.auth())
+router.resource('modes', '#controllers/modes_controller').use('*', middleware.auth())
 
 // Expense and Analytics routes
 router
   .group(() => {
-    router.get('/by-month', '#controllers/expense_controller.getByMonth')
-    router.get('/stats/daily-summary', '#controllers/expense_controller.getDailySummary')
-    router.get('/stats/category-summary', '#controllers/expense_controller.getCategorySummary')
-    router.resource('expenses', '#controllers/expense_controller').apiOnly()
+    router.get('/by-month', '#controllers/expenses_controller.getByMonth')
+    router.get('/stats/daily-summary', '#controllers/expenses_controller.getDailySummary')
+    router.get('/stats/category-summary', '#controllers/expenses_controller.getCategorySummary')
+    router.resource('expenses', '#controllers/expenses_controller').apiOnly()
   })
   .use(middleware.auth())

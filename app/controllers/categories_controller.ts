@@ -3,18 +3,12 @@ import { HttpContext } from '@adonisjs/core/http'
 import vine from '@vinejs/vine'
 
 export default class CategoryController {
-  /**
-   * Display a list of resource
-   */
   async index({ auth }: HttpContext) {
     const user = auth.getUserOrFail()
-    await user.load('categories')
-    return user.categories
+    const categories = await Category.query().where('userId', user.id)
+    return categories
   }
 
-  /**
-   * Handle form submission for the creation action
-   */
   async store({ request, auth }: HttpContext) {
     const user = auth.getUserOrFail()
     const schema = vine.object({ name: vine.string().trim().minLength(1) })
@@ -24,11 +18,13 @@ export default class CategoryController {
     return category
   }
 
-  /**
-   * Handle form submission for the update action
-   */
-  async update({ params, request }: HttpContext) {
-    const category = await Category.findOrFail(params.id)
+  async update({ params, request, auth }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const category = await Category.query()
+      .where('id', params.id)
+      .where('user_id', user.id)
+      .firstOrFail()
+
     const schema = vine.object({ name: vine.string().trim().minLength(1) })
     const { name } = await vine.compile(schema).validate(request.all())
 
@@ -38,11 +34,13 @@ export default class CategoryController {
     return category
   }
 
-  /**
-   * Delete record
-   */
-  async destroy({ params }: HttpContext) {
-    const category = await Category.findOrFail(params.id)
+  async destroy({ params, auth }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const category = await Category.query()
+      .where('id', params.id)
+      .where('user_id', user.id)
+      .firstOrFail()
+      
     await category.delete()
     return { message: 'Category deleted successfully' }
   }

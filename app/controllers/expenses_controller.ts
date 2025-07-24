@@ -35,6 +35,59 @@ export default class ExpenseController {
     return expenses
   }
 
+  async update({ params, request, auth }: HttpContext) {
+    const user = auth.getUserOrFail()
+
+    // Find the original expense
+    const expense = await Expense.query()
+      .where('id', params.id)
+      .where('user_id', user.id)
+      .firstOrFail()
+
+    const oldSavingsAmount = expense.savingsAmount
+
+    // Validate new data
+    const schema = vine.object({
+      amount: vine.number().positive(),
+      description: vine.string().trim(),
+      date: vine.string(),
+      categoryId: vine.number().exists(async (db, value) => {
+        const category = await db.from('categories').where('id', value).where('user_id', user.id).first()
+        return !!category
+      }),
+      modeId: vine.number().exists(async (db, value) => {
+        const mode = await db.from('modes').where('id', value).where('user_id', user.id).first()
+        return !!mode
+      }),
+    })
+    const payload = await vine.compile(schema).validate(request.all())
+
+    // Calculate new savings
+    const newSavingsAmount = this.calculateSavings(payload.amount)
+    const savingsDifference = newSavingsAmount - oldSavingsAmount
+
+    const updatedExpense = await db.transaction(async (trx) => {
+      // 1. Update the expense record
+      expense.useTransaction(trx)
+      expense.merge({
+        ...payload,
+        savingsAmount: newSavingsAmount,
+        date: DateTime.fromISO(payload.date),
+      })
+      await expense.save()
+
+      // 2. Adjust wallet balance by the difference
+      const wallet = await Wallet.findByOrFail('userId', user.id, { client: trx })
+      wallet.balance += savingsDifference
+      await wallet.save()
+      
+      await expense.load('category')
+      await expense.load('mode')
+      return expense
+    })
+
+    return updatedExpense
+  }
   /**
    * Create a new expense and update the wallet
    */

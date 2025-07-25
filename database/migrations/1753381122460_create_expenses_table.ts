@@ -13,8 +13,8 @@ export default class extends BaseSchema {
       table.integer('mode_id').unsigned().references('modes.id').onDelete('SET NULL')
 
       // Expense Details
-      table.decimal('amount', 14, 2).notNullable()
-      table.decimal('savings_amount', 14, 2).notNullable()
+      table.double('amount').notNullable()
+      table.double('savings_amount').notNullable()
       table.string('description').notNullable()
       table.dateTime('date').notNullable()
 

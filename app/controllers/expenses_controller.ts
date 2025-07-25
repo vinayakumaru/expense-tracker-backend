@@ -169,8 +169,8 @@ export default class ExpenseController {
 
     const expenses = await Expense.query()
       .where('userId', user.id)
-      .whereRaw("strftime('%Y', date) = ?", [year])
-      .whereRaw("strftime('%m', date) = ?", [month.padStart(2, '0')])
+      .whereRaw("TO_CHAR(date, 'YYYY') = ?", [year])
+      .whereRaw("TO_CHAR(date, 'MM') = ?", [month.padStart(2, '0')])
       .preload('category')
       .preload('mode')
       .orderBy('date', 'desc')
